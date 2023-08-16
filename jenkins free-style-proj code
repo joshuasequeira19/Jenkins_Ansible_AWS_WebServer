@@ -1,0 +1,35 @@
+Build Steps:
+
+Step 1:
+
+jenkins
+
+Exec command: 
+
+rsync -avh /var/lib/jenkins/workspace/jenkins-docker-ansible/* root@172.31.37.197:/opt
+
+Step 2:
+
+Ansible
+
+Exec command:
+
+cd /opt
+
+docker image build  -t $JOB_NAME:v1.$BUILD_ID .
+
+docker image tag $JOB_NAME:v1.$BUILD_ID ghostiexd/$JOB_NAME:v1.$BUILD_ID
+docker image tag $JOB_NAME:v1.$BUILD_ID ghostiexd/$JOB_NAME:latest
+
+docker image push ghostiexd/$JOB_NAME:v1.$BUILD_ID
+docker image push ghostiexd/$JOB_NAME:latest
+
+docker image rmi $JOB_NAME:v1.$BUILD_ID ghostiexd/$JOB_NAME:v1.$BUILD_ID ghostiexd/$JOB_NAME:latest
+
+Step 3:
+
+Ansible
+
+Exec command:
+
+ansible-playbook /opt/webapp.yml
